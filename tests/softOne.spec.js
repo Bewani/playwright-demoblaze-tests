@@ -1,3 +1,4 @@
+import { title } from 'process';
 import { test } from './testWithUser.js';
 import { expect } from '@playwright/test';
 
@@ -69,4 +70,37 @@ test('Login with Created user', async ({user})=>{
     await expect(page.locator('#nameofuser')).toHaveText(new RegExp(username,'i'))
 
 });
+
+test ('Search for all brands sony laptops', async({page})=>{
+    //go to home page
+    await page.goto('https://www.demoblaze.com/');
+
+    //click on the laptop menu item
+     await page.click ('a:has-text("Laptops")');
+
+       // Wait until all laptops are loaded 
+    await page.waitForFunction(() => {
+    const cards = document.querySelectorAll('.card-title');
+    return cards.length > 0;
+     });
+
+     //wait for all the laptops to load
+     const laptoptitles = page.locator('.card-title');
+     const count = await laptoptitles.count();
+
+      expect(count).toBeGreaterThan(0);
+
+     //Get all the laptop titels
+     const laptopTitels = await page.$$eval('.card-title', els => els.map(e => e.textContent.trim()));
+
+     //filter laptop that include "sony"
+     const sonyLaptops = laptopTitels.filter(title => title.toLowerCase().includes('sony'));
+
+     console.log('Sony laptop found : ', sonyLaptops);
+
+     expect(sonyLaptops.length).toBeGreaterThan(0);
+
+});
+
+
 
