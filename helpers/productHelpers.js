@@ -1,11 +1,7 @@
 // helpers/productHelpers.js
 import { expect } from '@playwright/test';
 
-export async function navigateToHomeAndCategory(page, category = 'Laptops') {
-  await page.goto('https://www.demoblaze.com/');
-  await page.click(`a:has-text("${category}")`);
-  await page.waitForSelector('.card-title');
-}
+
 
 export async function clickByLaptopName(page, name) {
   await page.click(`h4.card-title:has-text("${name}")`);
@@ -23,13 +19,13 @@ export async function addToCart(page) {
 
 export async function navigateToCart(page) {
   await page.click('a:has-text("Cart")');
-  await expect(page).toHaveURL(/.*cart.html/);
+  expect(page.waitForURL('**/cart.html'));
 }
 
 export async function verifyProductInCart(page, productName) {
-  const row = page.locator(`tr:has-text("${productName}")`);
-  await row.waitFor({ state: 'visible', timeout: 15000 });
-  await expect(row).toBeVisible();
+  await expect(page.locator(`tr:has-text("${productName}")`)).toBeVisible();
+  await page.waitForSelector('tr:has-text("Sony vaio i5")', { timeout: 15000 });
+  await expect(page.locator('tr:has-text("Sony vaio i5")')).toBeVisible();
 }
 
 export async function deleteProductFromCart(page, productName) {
